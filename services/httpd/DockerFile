@@ -1,0 +1,6 @@
+FROM httpd:2.4.62
+
+COPY --chown=root:root /services/httpd/httpd.conf /usr/local/apache2/conf/httpd.conf
+COPY --chown=root:root /services/httpd/extra /usr/local/apache2/conf/extra
+COPY --chown=root:root /services/httpd/keys/server.crt /usr/local/apache2/keys/server.crt
+COPY --chown=root:root /services/httpd/keys/server.key /usr/local/apache2/keys/server.key

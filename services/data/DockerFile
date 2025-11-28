@@ -1,0 +1,13 @@
+FROM busybox:1.37-uclibc
+
+# Create user: This user id is for the docker container php-fpm
+# SRC: https://hub.docker.com/layers/library/php/8.1.31-fpm-alpine3.21/images/sha256-4b5a18212e341494ab8fe367cdd5de508a0c5da2e29e669833e6af1513457fd0
+RUN addgroup php-fpm
+RUN adduser -u 82 -D -S -G php-fpm php-fpm
+
+# Copy the source files
+COPY --chown=php-fpm:root /data /var/www/data
+COPY --chown=php-fpm:root /app /var/www/html
+
+# Make sure the container does not exit
+CMD tail -f /dev/null

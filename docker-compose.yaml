@@ -1,0 +1,56 @@
+services:
+
+  # Apache httpd webserver 
+  httpd:
+    container_name: team-6-httpd-server
+    ports:
+      - ${SERVER_PORT}:443
+    build: 
+      context: .
+      dockerfile: ./services/httpd/DockerFile
+    depends_on:
+      - data 
+    volumes_from:
+      - data
+    networks: 
+      - web-app-network
+
+  # PHP web app
+  php:
+    container_name: team-6-php-fpm
+    env_file: .env
+    build:
+      context: .
+      dockerfile: ./services/php/DockerFile
+    depends_on:
+      - data 
+    volumes_from:
+      - data
+    networks: 
+      - web-app-network
+
+  # Container for source code 
+  data:
+    container_name: team-6-source-code
+    build:
+      context: .
+      dockerfile: ./services/data/DockerFile
+    volumes:
+      - /var/www/
+
+  # MySQL container
+  db:
+    container_name: ${MYSQL_HOSTNAME}
+    image: mysql:8.4.0-oraclelinux8
+    volumes:
+      - ./services/sql/app-data-dump.sql:/docker-entrypoint-initdb.d/app-data-dump.sql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    networks: 
+      - web-app-network
+
+networks:
+  web-app-network:
